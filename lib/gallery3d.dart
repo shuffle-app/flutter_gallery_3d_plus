@@ -353,8 +353,13 @@ class GalleryItemConfig {
   final List<BoxShadow> shadows; //控制item的阴影
   final bool isShowTransformMask; //是否显示item的透明度蒙层的渐变
 
-  const GalleryItemConfig(
-      {this.width = 220, this.height = 300, this.radius = 0, this.isShowTransformMask = true, this.shadows = const []});
+  const GalleryItemConfig({
+    this.width = 220,
+    this.height = 300,
+    this.radius = 0,
+    this.isShowTransformMask = false,
+    this.shadows = const [],
+  });
 }
 
 class Gallery3DController {
