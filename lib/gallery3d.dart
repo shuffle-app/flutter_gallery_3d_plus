@@ -68,6 +68,12 @@ class _Gallery3DState extends State<Gallery3D> with TickerProviderStateMixin, Wi
   }
 
   @override
+  void didUpdateWidget(covariant Gallery3D oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _updateAllGalleryItemTransform();
+  }
+
+  @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _timer?.cancel();
