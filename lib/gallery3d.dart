@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 
 class Gallery3D extends StatefulWidget {
@@ -103,7 +102,7 @@ class _Gallery3DState extends State<Gallery3D> with TickerProviderStateMixin, Wi
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: widget.width,
       height: widget.height ?? widget.itemConfig.height,
       child: GestureDetector(
@@ -146,7 +145,7 @@ class _Gallery3DState extends State<Gallery3D> with TickerProviderStateMixin, Wi
   }
 
   void _scrollToAngle(double angle) {
-    _autoScrollAnimationController = AnimationController(duration: Duration(milliseconds: 400), vsync: this);
+    _autoScrollAnimationController = AnimationController(duration: Duration(milliseconds: 550), vsync: this);
 
     Animation animation;
 
@@ -268,7 +267,9 @@ class _Gallery3DState extends State<Gallery3D> with TickerProviderStateMixin, Wi
 
     _galleryItemWidgetList = [
       ..._leftWidgetList,
+      // ..._leftWidgetList.take(5),
       ..._rightWidgetList,
+      // ..._rightWidgetList.take(5),
     ];
   }
 
@@ -310,19 +311,16 @@ class GalleryItem extends StatelessWidget {
     this.ellipseHeight = 0,
   }) : super(key: key);
 
-  Widget _buildItem(BuildContext context) {
-    return Container(width: config.width, height: config.height, child: builder(context, index));
-  }
-
   Widget _buildMaskTransformItem(Widget child) {
     if (!config.isShowTransformMask) return child;
     return Stack(children: [
       child,
-      Container(
-        width: config.width,
-        height: config.height,
-        color: Color.fromARGB(100 * (1 - transformInfo.scale) ~/ (1 - minScale), 0, 0, 0),
-      )
+      SizedBox(
+          width: config.width,
+          height: config.height,
+          child: ColoredBox(
+            color: Color.fromARGB(100 * (1 - transformInfo.scale) ~/ (1 - minScale), 0, 0, 0),
+          ))
     ]);
   }
 
@@ -333,19 +331,19 @@ class GalleryItem extends StatelessWidget {
 
   Widget _buildShadowItem(Widget child) {
     if (config.shadows.isEmpty) return child;
-    return Container(child: child, decoration: BoxDecoration(boxShadow: config.shadows));
+    return DecoratedBox(child: child, decoration: BoxDecoration(boxShadow: config.shadows));
   }
 
   @override
   Widget build(BuildContext context) {
     return Transform.translate(
         offset: transformInfo.offset,
-        child: Container(
+        child: SizedBox(
           width: config.width,
           height: config.height,
           child: Transform.scale(
             scale: transformInfo.scale,
-            child: _buildShadowItem(_buildRadiusItem(_buildMaskTransformItem(_buildItem(context)))),
+            child: _buildShadowItem(_buildRadiusItem(_buildMaskTransformItem(builder(context, index)))),
           ),
         ));
   }
@@ -394,9 +392,10 @@ class Gallery3DController {
 
   void init(GalleryItemConfig itemConfig) {
     this.itemConfig = itemConfig;
-    unitAngle = 360 / itemCount;
+    // unitAngle = 360 / itemCount;
+    unitAngle = 360 / min(itemCount,7);
     // perimeter = calculatePerimeter(itemConfig.width * 0.8, 50);
-    perimeter = calculatePerimeter(widgetWidth * 0.7, 50);
+    perimeter = calculatePerimeter(itemConfig.width, itemConfig.height);
 
     _galleryItemTransformInfoList.clear();
     for (var i = 0; i < itemCount; i++) {
@@ -461,7 +460,8 @@ class Gallery3DController {
       angle = 360 - angle;
     }
 
-    angle += 30; //修正一下，视觉效果貌似更好
+    angle += 25; //修正一下，视觉效果貌似更好
+    // if (angle < 150) angle += 25; //修正一下，视觉效果貌似更好
 
     var scale = angle / 180.0;
 
@@ -470,13 +470,14 @@ class Gallery3DController {
     } else if (scale < minScale) {
       scale = minScale;
     }
+    // dv.log('angle with $angle and scale with $scale',name: 'Gallery3DController');
 
     return scale;
   }
 
   ///计算椭圆轨迹的点
   Offset calculateOffset(double angle) {
-    double width = widgetWidth * 0.7; //椭圆宽
+    double width = itemConfig.width; //椭圆宽
     double radiusOuterX = width / 2;
     double radiusOuterY = ellipseHeight;
 
