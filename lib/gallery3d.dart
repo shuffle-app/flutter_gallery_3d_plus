@@ -392,8 +392,8 @@ class Gallery3DController {
 
   void init(GalleryItemConfig itemConfig) {
     this.itemConfig = itemConfig;
-    // unitAngle = 360 / itemCount;
-    unitAngle = 360 / min(itemCount,7);
+    unitAngle = 360 / itemCount;
+    // unitAngle = 360 / min(itemCount,8);
     // perimeter = calculatePerimeter(itemConfig.width * 0.8, 50);
     perimeter = calculatePerimeter(itemConfig.width, itemConfig.height);
 
@@ -460,7 +460,7 @@ class Gallery3DController {
       angle = 360 - angle;
     }
 
-    angle += 25; //修正一下，视觉效果貌似更好
+    angle += 15; //修正一下，视觉效果貌似更好
     // if (angle < 150) angle += 25; //修正一下，视觉效果貌似更好
 
     var scale = angle / 180.0;
@@ -477,6 +477,7 @@ class Gallery3DController {
 
   ///计算椭圆轨迹的点
   Offset calculateOffset(double angle) {
+    // double width = widgetWidth * 0.7;
     double width = itemConfig.width; //椭圆宽
     double radiusOuterX = width / 2;
     double radiusOuterY = ellipseHeight;
