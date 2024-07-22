@@ -69,6 +69,9 @@ class _Gallery3DState extends State<Gallery3D> with TickerProviderStateMixin, Wi
   @override
   void didUpdateWidget(covariant Gallery3D oldWidget) {
     super.didUpdateWidget(oldWidget);
+    controller = widget.controller;
+    controller.vsync = this;
+    controller.init(widget.itemConfig);
     _updateAllGalleryItemTransform();
   }
 
